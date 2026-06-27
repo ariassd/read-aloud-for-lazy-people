@@ -10,7 +10,7 @@ from flask import (
     Blueprint,
     Response,
 )
-from service import get_audio_from_text, get_random_voice_by_language
+from service import get_audio_from_text, get_all_voices
 
 load_dotenv()
 
@@ -53,6 +53,21 @@ def generate_audio():
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+@api_bp.route("/voices-data", methods=["GET"])
+async def get_all_voices_data():
+    voices = await get_all_voices()
+    formatted_data = [
+        {
+            "name": v["ShortName"],
+            "gender": v["Gender"],
+            "lang": v["Locale"],
+            "label": v["FriendlyName"].replace("Microsoft", "").strip(),
+        }
+        for v in voices
+    ]
+    return jsonify(formatted_data)
 
 
 app.register_blueprint(api_bp)

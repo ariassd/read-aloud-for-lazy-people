@@ -40,15 +40,13 @@ async def get_audio_from_text(lang: str, voice_code: str, text_string: str) -> b
     try:
         if lang == "auto":
             lang = detect(text_string)
-        print(f"Detected language: {lang}")
-        voice_code = await get_random_voice_by_language(lang)
+        # print(f"Detected language: {lang}")
+        if voice_code == "auto":
+            voice_code = await get_random_voice_by_language(lang)
     except Exception as e:
         print(f"Error: {e}")
-
-    print(f"Generating audio into memory using '{voice_code}'")
-
+    # print(f"Generating audio into memory using '{voice_code}'")
     communicate = edge_tts.Communicate(text_string, voice_code)
-
     audio_buffer = io.BytesIO()
 
     # Stream the chunks into the memory buffer
@@ -105,6 +103,20 @@ async def conver_text_to_voice():
 
     # Delete the audio file once it was read
     # os.remove(AUDIO_FILE)
+
+
+async def get_all_voices():
+    # This fetches the live list directly from Microsoft
+    voices = await edge_tts.list_voices()
+    allowed_prefixes = [
+        p.strip().lower() for p in os.getenv("ALLOWED_LANGUAGES", "en").split(",")
+    ]
+    filtered_voices = [
+        v
+        for v in voices
+        if any(v["Locale"].startswith(prefix) for prefix in allowed_prefixes)
+    ]
+    return filtered_voices
 
 
 if __name__ == "__main__":

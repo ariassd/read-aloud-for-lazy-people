@@ -1,29 +1,39 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from "react";
 
 export interface VoiceSelectionData {
   lang: string;
   voice: string;
 }
 
-const VOICE_DATA = [
-  { lang: "en-US", name: "en-US-AnaNeural", label: "Ana (US)" },
-  { lang: "en-US", name: "en-US-ChristopherNeural", label: "Christopher (US)" },
-  { lang: "es-ES", name: "es-ES-ElviraNeural", label: "Elvira (Spain)" },
-  { lang: "es-MX", name: "es-MX-JorgeNeural", label: "Jorge (Mexico)" },
-];
-
 interface VoiceSelectorProps {
   onSelectVoice: (data: VoiceSelectionData) => void;
 }
 
-export const VoiceSelector: React.FC<VoiceSelectorProps> = ({ onSelectVoice }) => {
+export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
+  onSelectVoice,
+}) => {
   const [selectedLang, setSelectedLang] = useState<string>("auto");
   const [selectedVoice, setSelectedVoice] = useState<string>("auto");
+  const [allVoices, setAllVoices] = useState<any[]>([]);
 
-  const availableVoices = useMemo(() => {
-    if (selectedLang === "auto") return [];
-    return VOICE_DATA.filter(v => v.lang === selectedLang);
-  }, [selectedLang]);
+  useEffect(() => {
+    fetch("/api/voices-data")
+      .then((res) => res.json())
+      .then((data) => {
+        setAllVoices(data);
+      })
+      .catch((err) => console.error("Failed to load voices", err));
+  }, []);
+
+  const languages = useMemo(() => {
+    const prefixes = allVoices.map((v) => v.lang.split("-")[0]);
+    return [...new Set(prefixes)].sort();
+  }, [allVoices]);
+
+  const availableVoices = useMemo(
+    () => allVoices.filter((v) => v.lang.startsWith(selectedLang)),
+    [selectedLang, allVoices],
+  );
 
   const notifyParent = (lang: string, voice: string) => {
     onSelectVoice({ lang, voice });
@@ -44,21 +54,23 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({ onSelectVoice }) =
 
   return (
     <div className="symbols">
-      <label>Language: 
+      <label>
+        Language:
         <select value={selectedLang} onChange={handleLanguageChange}>
           <option value="auto">Auto-detect</option>
-          {[...new Set(VOICE_DATA.map(v => v.lang))].map(lang => (
-            <option key={lang} value={lang}>{lang}</option>
+          {languages.map((lang) => (
+            <option key={lang} value={lang}>
+              {lang}
+            </option>
           ))}
         </select>
       </label>
 
-      <label>Voice: 
+      <label>
+        Voice:
         <select value={selectedVoice} onChange={handleVoiceChange}>
-          <option value="auto">
-            {selectedLang === "auto" ? "System Auto-select" : "Auto-select for this language"}
-          </option>
-          {availableVoices.map(voice => (
+          <option value="auto">Auto-select</option>
+          {availableVoices.map((voice) => (
             <option key={voice.name} value={voice.name}>
               {voice.label}
             </option>

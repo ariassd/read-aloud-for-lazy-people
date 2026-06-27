@@ -3,9 +3,12 @@ export const Footer = () => {
 
   return (
     <footer>
-      <span>Made with ♥️ by Luis Arias</span>
+      <span>Made by Luis Arias</span>
       <span className="footer-sep">·</span>
       <span>© {year} All rights reserved</span>
+      <span className="footer-sep">·</span>
+      {/* Added attribution here */}
+      <span>Powered by <a href="https://github.com/rany2/edge-tts" target="_blank" rel="noopener noreferrer">Microsoft Edge TTS</a></span>
       <span className="footer-sep">·</span>
       <a
         href="https://github.com/ariassd/read-aloud-for-lazy-people"

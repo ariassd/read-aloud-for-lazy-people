@@ -299,6 +299,7 @@ body {
     border-color 0.15s,
     background 0.15s;
   line-height: 1;
+  width: 48px;
 }
 
 .theme-btn:hover {
