@@ -1,75 +1,84 @@
-# React + TypeScript + Vite
+# 🎙️ Read aloud for lazy people
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, efficient, and high-quality application to convert text into natural-sounding speech using Microsoft Edge's neural engine.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
+- **Neural Voices:** Professional, natural, and fluid audio quality.
+- **Variety:** Random voice selection to prevent auditory fatigue.
+- **Multi-Accent Support:** Supports voices from Spain, Mexico, Argentina, Colombia, and more.
+- **Multilanguage:** Voices are selected according to the language of the text.
+- **Lightweight:** Uses modern, efficient libraries (`edge-tts` and `miniaudio`).
+- **High Fidelity:** Generates top-tier audio files from your text.
+- **Web UI:** User-friendly React-based interface with dark and light theme support.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🖼️ UI Screenshots
 
-## React Compiler
+| Dark Mode | Light Mode |
+|-----------|------------|
+| ![Dark Mode](assets/screenshot-dark.png) | ![Light Mode](assets/screenshot-light.png) |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠 Requirements
+- **Python 3.8+** installed on your system.
+- **Node.js** (for the React frontend)
+- Internet connection (required for generating the high-quality audio).
 
-## Expanding the ESLint configuration
+## 📦 Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Clone this repository or download the script:**
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Create environment**
+```bash
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+python -m venv .venv
+source .venv/bin/activate
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+3. **Install the necessary dependencies:**
+```bash
+
+pip install -r requirements.txt
 
 ```
+
+4. **Install frontend dependencies:**
+```bash
+
+npm install
+```
+
+
+## 🚀 Usage
+
+1. Start the Python backend server:
+```bash
+npm run start:py
+```
+
+2. Start the React development server:
+```bash
+npm run dev
+```
+
+3. Open your browser to `http://localhost:5173` (or the port shown in the terminal)
+
+4. Enter or paste your text in the input area
+5. Optionally select a voice and language from the dropdown, or let the backend auto-select based on the text
+6. Click "Read this" to generate and play the speech
+
+
+## 💡 Notes
+
+* This script is designed to be simple and functional.
+* You can easily extend the logic to change voices between paragraphs for a more dynamic reading experience.
+* Voice and language can be auto-selected by the backend based on the text content, or manually selected by the user from the UI.
+
+## 📜 License
+
+This project is open-source. Feel free to use, modify, and improve it as you wish.
+
+
+
