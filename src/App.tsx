@@ -3,20 +3,19 @@ import React, { useEffect, useState } from "react";
 //components
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
-import { VoiceSelector } from "./components/VoiceSelector";
+import { VoiceSelector, type VoiceSelectionData } from "./components/VoiceSelector";
 import "./App.css";
 
 function App() {
   const [dark, setDark] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("  ");
-  const [voice, setVoice] = useState("");
+  const [voice, setVoice] = useState({ lang: "auto", voice: "auto" });
   const [text, setText] = useState("");
 
-
-  useEffect(()=> {
-    setTimeout(() => setError(""), 2000)
-  }, [error])
+  useEffect(() => {
+    setTimeout(() => setError(""), 2000);
+  }, [error]);
 
   useEffect(() => {
     setDark(true);
@@ -28,12 +27,11 @@ function App() {
     document.body.classList.toggle("light", !dark);
   };
 
-  const changeVoice = (voice: string) => {
-    setVoice(voice)
-  }
+  const changeVoice = (voice: VoiceSelectionData) => {
+    setVoice(voice);
+  };
 
   const getVoiceMessage = () => {
-
     if (!voice) {
       setError("Select a voice first");
       return;
@@ -46,13 +44,15 @@ function App() {
     setLoading(true);
     // setTimeout(() => setLoading(false), 1000);
 
+    console.log(voice);
+
     const fetchData = async () => {
       try {
         const [audioRes] = await Promise.all([
           fetch("/api/audio", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ voice: voice, text: text  }),
+            body: JSON.stringify({ lang: voice.lang , voice: voice.voice, text: text }),
           }),
         ]);
 
@@ -62,12 +62,11 @@ function App() {
         }
 
         setLoading(false);
-        
+
         const audioBlob = await audioRes.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         audio.play();
-        
       } catch (err: any) {
         console.log("ERROR", err);
         setError(err.message);
@@ -87,10 +86,9 @@ function App() {
           <textarea
             placeholder="Hello I am a reading tool designed to help you"
             autoComplete="off"
-            rows={25}
-            cols={80}
             value={text}
-            onChange={e => setText(e.target.value)}
+            className="main-textarea" // Add this class
+            onChange={(e) => setText(e.target.value)}
           />
         </div>
         <div>

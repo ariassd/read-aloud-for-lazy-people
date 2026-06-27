@@ -45,6 +45,24 @@ header {
   padding-bottom: 1rem;
 }
 
+input[type="text"],
+select,
+textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-family: "JetBrains Mono", monospace;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+select {
+  cursor: pointer;
+  appearance: none; /* Optional: standardizes the look */
+}
+
 .input-area {
   max-width: 860px;
   margin: 0 auto 2rem;
@@ -73,7 +91,9 @@ input[type="text"] {
   transition: border-color 0.15s;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
   border-color: var(--accent);
 }
 
@@ -93,6 +113,9 @@ button {
   cursor: pointer;
   transition: opacity 0.15s;
   white-space: nowrap;
+
+  width: 100%;
+  margin-top: 1rem;
 }
 
 button:hover {
@@ -334,4 +357,33 @@ footer {
 
 body {
   padding-bottom: 3rem;
+}
+
+
+/* Update the textarea styling */
+.main-textarea {
+  width: 100%;
+  min-height: 300px; /* Adjust as needed */
+  resize: vertical;  /* Allows the user to resize height if they want */
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+}
+
+/* Ensure the wrapper respects mobile padding */
+.input-wrap {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+/* Adjust the input-area to stack on mobile */
+.input-area {
+  flex-direction: column;
+  align-items: center;
 }

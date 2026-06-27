@@ -32,10 +32,19 @@ async def get_random_voice_by_language(language_code):
     return random_voice["ShortName"]
 
 
-async def get_audio_from_text(text_string: str, voice_code: str) -> bytes:
+async def get_audio_from_text(lang: str, voice_code: str, text_string: str) -> bytes:
     """
     Generates audio from text using edge-tts and returns it as bytes.
     """
+
+    try:
+        if lang == "auto":
+            lang = detect(text_string)
+        print(f"Detected language: {lang}")
+        voice_code = await get_random_voice_by_language(lang)
+    except Exception as e:
+        print(f"Error: {e}")
+
     print(f"Generating audio into memory using '{voice_code}'")
 
     communicate = edge_tts.Communicate(text_string, voice_code)

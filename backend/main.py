@@ -10,7 +10,7 @@ from flask import (
     Blueprint,
     Response,
 )
-from service import get_audio_from_text
+from service import get_audio_from_text, get_random_voice_by_language
 
 load_dotenv()
 
@@ -37,6 +37,7 @@ def public_files(filename):
 @api_bp.route("/audio", methods=["POST"])
 def generate_audio():
     data = request.get_json()
+    lang = data.get("lang", "").strip()
     voice = data.get("voice", "").strip()
     text = data.get("text", "").strip()
 
@@ -45,7 +46,7 @@ def generate_audio():
 
     try:
         # Run the async function synchronously within the Flask route
-        audio_bytes = asyncio.run(get_audio_from_text(text, voice))
+        audio_bytes = asyncio.run(get_audio_from_text(lang, voice, text))
 
         # Return the raw bytes as an audio file response
         return Response(
