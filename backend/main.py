@@ -16,6 +16,7 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIST_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "dist"))
+PUBLIC_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "public"))
 
 app = Flask(__name__, template_folder=DIST_DIR, static_folder=DIST_DIR)
 api_bp = Blueprint("api", __name__, url_prefix="/api")
@@ -26,8 +27,14 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/<path:path>")
+@app.route("/public/<path:path>")
 def serve_static(path):
+    return send_from_directory(PUBLIC_DIR, path)
+
+
+@app.route("/<path:path>")
+def serve_static_pu(path):
+
     return send_from_directory(DIST_DIR, path)
 
 
