@@ -14,9 +14,11 @@ from service import get_audio_from_text, get_random_voice_by_language
 
 load_dotenv()
 
-app = Flask(__name__, template_folder="web")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DIST_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "dist"))
+
+app = Flask(__name__, template_folder=DIST_DIR, static_folder=DIST_DIR)
 api_bp = Blueprint("api", __name__, url_prefix="/api")
-EXPOSED_DIR = os.path.abspath("./web")
 
 
 @app.route("/")
@@ -24,14 +26,9 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/src/<path:filename>")
-def src_files(filename):
-    return send_from_directory(os.path.join("web", "src"), filename)
-
-
-@app.route("/public/<path:filename>")
-def public_files(filename):
-    return send_from_directory(os.path.join("web", "public"), filename)
+@app.route("/<path:path>")
+def serve_static(path):
+    return send_from_directory(DIST_DIR, path)
 
 
 @api_bp.route("/audio", methods=["POST"])
