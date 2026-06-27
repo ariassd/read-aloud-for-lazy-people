@@ -10,13 +10,16 @@ from flask import (
     Blueprint,
     Response,
 )
-from service import get_audio_from_text, get_random_voice_by_language
+from service import get_audio_from_text, get_all_voices
 
 load_dotenv()
 
-app = Flask(__name__, template_folder="web")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DIST_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "dist"))
+PUBLIC_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "public"))
+
+app = Flask(__name__, template_folder=DIST_DIR, static_folder=DIST_DIR)
 api_bp = Blueprint("api", __name__, url_prefix="/api")
-EXPOSED_DIR = os.path.abspath("./web")
 
 
 @app.route("/")
@@ -24,14 +27,15 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/src/<path:filename>")
-def src_files(filename):
-    return send_from_directory(os.path.join("web", "src"), filename)
+@app.route("/public/<path:path>")
+def serve_static(path):
+    return send_from_directory(PUBLIC_DIR, path)
 
 
-@app.route("/public/<path:filename>")
-def public_files(filename):
-    return send_from_directory(os.path.join("web", "public"), filename)
+@app.route("/<path:path>")
+def serve_static_pu(path):
+
+    return send_from_directory(DIST_DIR, path)
 
 
 @api_bp.route("/audio", methods=["POST"])
@@ -56,6 +60,21 @@ def generate_audio():
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+@api_bp.route("/voices-data", methods=["GET"])
+async def get_all_voices_data():
+    voices = await get_all_voices()
+    formatted_data = [
+        {
+            "name": v["ShortName"],
+            "gender": v["Gender"],
+            "lang": v["Locale"],
+            "label": v["FriendlyName"].replace("Microsoft", "").strip(),
+        }
+        for v in voices
+    ]
+    return jsonify(formatted_data)
 
 
 app.register_blueprint(api_bp)

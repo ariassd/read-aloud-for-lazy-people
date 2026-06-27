@@ -42,9 +42,6 @@ function App() {
     }
 
     setLoading(true);
-    // setTimeout(() => setLoading(false), 1000);
-
-    console.log(voice);
 
     const fetchData = async () => {
       try {
@@ -68,7 +65,6 @@ function App() {
         const audio = new Audio(audioUrl);
         audio.play();
       } catch (err: any) {
-        console.log("ERROR", err);
         setError(err.message);
         setLoading(false);
       }
