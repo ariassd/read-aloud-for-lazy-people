@@ -63,6 +63,12 @@ npm run start:py
 npm run dev
 ```
 
+**Start the React development server:**
+```bash
+npm run build
+gunicorn -w 4 -b 0.0.0.0:8000 --pythonpath backend main:app
+```
+
 3. Open your browser to `http://localhost:5173` (or the port shown in the terminal)
 
 4. Enter or paste your text in the input area
