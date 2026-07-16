@@ -22,6 +22,13 @@ A simple, efficient, and high-quality application to convert text into natural-s
 - **Node.js** (for the React frontend)
 - Internet connection (required for generating the high-quality audio).
 
+## ⚙️ Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| ALLOWED_LANGUAGES | No | Comma-separated list of allowed languages. Default: `en,es,pt` |
+| MISTRAL_API_KEY | No | Your Mistral API key |
+
 ## 📦 Installation
 
 1. **Clone this repository or download the script:**
