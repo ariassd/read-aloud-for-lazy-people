@@ -34,3 +34,8 @@ venv/
 .env
 .flaskenv
 *.env
+
+#temp
+temp
+read_this.txt
+read_this*.txt
