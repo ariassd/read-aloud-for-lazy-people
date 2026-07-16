@@ -6,8 +6,11 @@ import pygame
 import asyncio
 import edge_tts
 from langdetect import detect
+from dotenv import load_dotenv
+from mistralai.client import Mistral
+from tts_system_prompt import SYSTEM_PROMPT
 
-
+load_dotenv()
 TEXT_FILE = "read_this.txt"
 AUDIO_FILE = "temp/temp.mp3"
 
@@ -80,7 +83,31 @@ async def conver_text_to_voice():
     except Exception as e:
         print(f"Error: {e}")
 
-    # 3. Generate voice file
+    # 3. Prepare text for reading using IA
+    MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+    if MISTRAL_API_KEY:
+        print("USING MISTRAL ENHANCED READING")
+        mistral_client = Mistral(api_key=MISTRAL_API_KEY)
+
+        conversation_history = [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT.format(language=language, VOICE=VOICE),
+            }
+        ]
+
+        conversation_history.append({"role": "user", "content": text_string})
+
+        response = mistral_client.chat.complete(
+            model="mistral-large-latest", messages=conversation_history
+        )
+
+        text_string = response.choices[0].message.content
+
+        with open("./read_this_tmp.txt", "w", encoding="utf-8") as file:
+            file.write(text_string)
+
+    # 4. Generate voice file
     print(f"Generating voice file using '{VOICE}'")
     communicate = edge_tts.Communicate("- . . . . . " + text_string, VOICE)
     await communicate.save(
