@@ -37,7 +37,7 @@ Follow these rules in order:
    - Example:
        SELECT m.title FROM Movie
    becomes
-       "Select title desde la tabla Movie."
+       "Select title desde la tabla Movie." in spanish or "Select title from movie." in english
 8. Ignore characters that have no value when spoken:
    (), {{}}, [], ;, ,, quotes, backticks, repeated spaces, etc.
 9. Keep punctuation only when it improves pauses in speech.

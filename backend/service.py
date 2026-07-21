@@ -61,7 +61,7 @@ async def get_audio_from_text(lang: str, voice_code: str, text_string: str) -> b
     return audio_buffer.getvalue()
 
 
-async def conver_text_to_voice():
+async def conver_text_to_voice(voice: str = ""):
 
     # 1. Read text file or paperclip
     # text_string = pyperclip.paste()
@@ -74,38 +74,21 @@ async def conver_text_to_voice():
             text_string = f.read()
 
     # 2. Determine file language
-    try:
-        language = detect(text_string)
-        print(f"Detected language: {language}")
-        # VOICE = "en-IE-EmilyNeural" # OP A
-        # VOICE = "en-NZ-MollyNeural" # OP B
-        VOICE = await get_random_voice_by_language(language)
-    except Exception as e:
-        print(f"Error: {e}")
+    if voice == "":
+        try:
+            language = detect(text_string)
+            print(f"Detected language: {language}")
+            # VOICE = "en-IE-EmilyNeural" # OP A
+            # VOICE = "en-NZ-MollyNeural" # OP B
+            VOICE = await get_random_voice_by_language(language)
+        except Exception as e:
+            print(f"Error: {e}")
+    else:
+        VOICE = voice
+        language = voice.split("-")[0]
 
     # 3. Prepare text for reading using IA
-    MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
-    if MISTRAL_API_KEY:
-        print("USING MISTRAL ENHANCED READING")
-        mistral_client = Mistral(api_key=MISTRAL_API_KEY)
-
-        conversation_history = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT.format(language=language, VOICE=VOICE),
-            }
-        ]
-
-        conversation_history.append({"role": "user", "content": text_string})
-
-        response = mistral_client.chat.complete(
-            model="mistral-large-latest", messages=conversation_history
-        )
-
-        text_string = response.choices[0].message.content
-
-        with open("./read_this_tmp.txt", "w", encoding="utf-8") as file:
-            file.write(text_string)
+    text_string = prepare_reading_ai(text_string, language, VOICE, speakers=[])
 
     # 4. Generate voice file
     print(f"Generating voice file using '{VOICE}'")
@@ -127,6 +110,40 @@ async def conver_text_to_voice():
         time.sleep(1)
 
     pygame.mixer.quit()
+
+
+def prepare_reading_ai(text_string, language, VOICE, speakers):
+    MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+    if MISTRAL_API_KEY:
+        print("USING MISTRAL ENHANCED READING")
+        mistral_client = Mistral(api_key=MISTRAL_API_KEY)
+
+        conversation_history = [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT.format(language=language, VOICE=VOICE),
+            }
+        ]
+
+        if len(speakers) > 0:
+            conversation_history.append(
+                {
+                    "role": "system",
+                    "content": f"This is a dialog, do not change speaker names: {','.join(speakers)}",
+                }
+            )
+
+        conversation_history.append({"role": "user", "content": text_string})
+
+        response = mistral_client.chat.complete(
+            model="mistral-large-latest", messages=conversation_history
+        )
+
+        text_string = response.choices[0].message.content
+
+        with open("./read_this_tmp.txt", "w", encoding="utf-8") as file:
+            file.write(text_string)
+    return text_string
 
     # Delete the audio file once it was read
     # os.remove(AUDIO_FILE)
