@@ -164,4 +164,4 @@ async def get_all_voices():
 
 
 if __name__ == "__main__":
-    asyncio.run(conver_text_to_voice())
+    asyncio.run(conver_text_to_voice("es-CL-LorenzoNeural"))
